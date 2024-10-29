@@ -34,7 +34,6 @@ function SendReceiveWebSocketMessage {
 
         while ($true) {
             $receiveResult = $WebSocket.ReceiveAsync($ReceiveBufferSegment, $CancellationToken)
-            Write-Host $receiveResult
             if ($receiveResult.Result.Count -gt 0) {
                 $receivedData.AddRange([byte[]]($ReceiveBufferSegment.Array)[0..($receiveResult.Result.Count - 1)])
             }
@@ -65,12 +64,8 @@ $Message = '{"id": 1,"method":"Network.getAllCookies"}'
 
 # Parse cookie data
 Write-Host "`nObtain all cookies.."
-Write-Host $url_capture.Length
-if ($url_capture.Length -ge 2) {
-    $response = SendReceiveWebSocketMessage -WebSocketUrl $url_capture[1] -Message $Message
-} else {
-    $response = SendReceiveWebSocketMessage -WebSocketUrl $url_capture[0] -Message $Message
-}
+$response = SendReceiveWebSocketMessage -WebSocketUrl $url_capture[-1] -Message $Message
+
 
 # Quit Chrome
 Write-Host "Close Chrome.."
