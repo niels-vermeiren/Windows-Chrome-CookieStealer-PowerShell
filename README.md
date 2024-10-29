@@ -8,4 +8,4 @@ The .MSI file can not bypass all AV's, but it is not detected by 85% of them. On
 ## Run the powershell command
 Powershell 7 is required
 ```pwsh.exe ChromeWindowsCookieStealer.ps1```
-Conversion to .msi is done with PowerShell Studio
+Conversion to .msi was done with 'PowerShell to exe&msi Converter free'
